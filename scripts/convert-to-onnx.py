@@ -64,7 +64,7 @@ if __name__ == "__main__":
         dummy_input,
         output_name,
         input_names = ["input"],
-        output_names = ["cls"],
+        output_names = ["cls_emb", "patch_emb"],
         opset_version=args.opset_version,
         do_constant_folding=True,
     )
