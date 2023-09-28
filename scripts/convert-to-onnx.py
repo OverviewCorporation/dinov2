@@ -56,7 +56,7 @@ if __name__ == "__main__":
     output_name = (
         args.output_name 
         if args.output_name 
-        else f"{args.model_name}_s{args.image_height}_bs{args.batch_size}_op{args.opset_version}.onnx"
+        else f"{args.model_name}_{args.batch_size}-3-{args.image_height}-{args.image_width}.onnx"
     )
 
     torch.onnx.export(
