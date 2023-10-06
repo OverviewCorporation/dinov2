@@ -9,15 +9,21 @@ parent_path = current_path.parent.parent.as_posix()
 sys.path.insert(0, parent_path)
 import hubconf
 
+from torchvision.transforms import Normalize
 
 class Wrapper(torch.nn.Module):
     def __init__(self, model):
         super().__init__()
         self.model = model
+        # model will input image in range [0, 255], normalize to imagenet mean and std
+        self.norm = Normalize(
+            mean=[123.675, 116.28, 103.53],
+            std=[58.395, 57.12, 57.375],
+        )
 
     def forward(self, tensor):
+        tensor = self.norm(tensor)
         outs = self.model.forward_features(tensor)
-        print(outs.keys())
         return outs["x_norm_clstoken"], outs["x_norm_patchtokens"]
 
 parser = argparse.ArgumentParser()
