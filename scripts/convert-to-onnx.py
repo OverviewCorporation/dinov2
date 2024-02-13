@@ -24,7 +24,7 @@ class Wrapper(torch.nn.Module):
     def forward(self, tensor):
         tensor = self.norm(tensor)
         outs = self.model.forward_features(tensor)
-        return outs["x_norm_clstoken"], outs["x_norm_patchtokens"]
+        return outs["x_norm_patchtokens"]
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--model_name", type=str, default="dinov2_vits14", help="dinov2 model name")
@@ -70,7 +70,7 @@ if __name__ == "__main__":
         dummy_input,
         output_name,
         input_names = ["input"],
-        output_names = ["cls_emb", "patch_emb"],
+        output_names = ["unpooled_features"],
         opset_version=args.opset_version,
         do_constant_folding=True,
     )
