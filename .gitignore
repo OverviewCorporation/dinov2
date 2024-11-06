@@ -13,3 +13,5 @@ dist/
 .vscode/
 
 *.onnx
+*.trt
+trt.cache

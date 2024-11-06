@@ -11,6 +11,8 @@ import hubconf
 
 from torchvision.transforms import Normalize
 
+from trt_conversion import onnx2trt
+
 class Wrapper(torch.nn.Module):
     def __init__(self, model):
         super().__init__()
@@ -59,18 +61,28 @@ if __name__ == "__main__":
 
     dummy_input = torch.rand([args.batch_size, 3, args.image_height, args.image_width]).to("cpu")
     dummy_output = model(dummy_input)
-    output_name = (
+    onnx_name = (
         args.output_name 
         if args.output_name 
-        else f"{args.model_name}_{args.batch_size}-3-{args.image_height}-{args.image_width}.onnx"
+        else f"80i_{args.model_name}_{args.batch_size}-3-{args.image_height}-{args.image_width}.onnx"
     )
+    trt_name = onnx_name.replace(".onnx", ".trt")
 
     torch.onnx.export(
         model,
         dummy_input,
-        output_name,
+        onnx_name,
         input_names = ["input"],
-        output_names = ["unpooled_features"],
+        output_names = ["patch_emb"],
         opset_version=args.opset_version,
         do_constant_folding=True,
     )
+    
+    onnx2trt(
+        onnx_name,
+        trt_name,
+        timing_cache_path='trt.cache',
+        flags=["FP16"],
+    )
+    # rm the onnx model
+    os.remove(onnx_name)
